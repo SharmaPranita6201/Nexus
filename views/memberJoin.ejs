@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard</title>
+  </head>
+  <body>
+    <div class="dash-box">
+      <h2>
+        username: <%= existingUser.username %> <br /><br />Role: <%=
+        existingUser.role %>
+      </h2>
+      <form action="/nexus/memberJoin" method="POST">
+        <label for="inputCode">Room Code</label>
+        <input name="inputCode" type="text" required />
+        <button>Join room</button>
+      </form>
+    </div>
+  </body>
+</html>

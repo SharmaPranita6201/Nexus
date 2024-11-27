@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login</title>
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <form action="/nexus/signup" method="POST">
+        <label for="name">Full Name</label>
+        <input name="userData[name]" type="text" />
+        <label for="username">Email</label>
+        <input name="userData[email]" type="text" />
+        <label for="username">Username</label>
+        <input name="userData[username]" type="text" />
+        <label for="password">Password</label>
+        <input name="userData[password]" type="password" />
+        <label for="password">Confirm Password</label>
+        <input name="userData[confirmPass]" type="password" />
+        <label for="role">Role</label>
+        <select name="userData[role]">
+          <option value="admin">Admin</option>
+          <option value="member">Member</option>
+        </select>
+        <button>Signup</button>
+      </form>
+    </div>
+  </body>
+</html>

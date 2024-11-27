@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard</title>
+  </head>
+  <body>
+    <div class="dash-box">
+      <h2>
+        username: <%= existingUser.username %> <br /><br />Role: <%=
+        existingUser.role %>
+      </h2>
+      <form class="form1" action="/nexus/adminCreate" method="POST">
+        <label for="roomName">Room Name</label>
+        <input name="roomName" type="text" required />
+        <button>Create room</button>
+      </form>
+      <ul>
+        <% for (let room of roomsList) {%>
+        <li><%= room.room %></li>
+        <form action="/nexus/manageRoom/<%= room.code %>" method="GET">
+          <button>Manage Room</button>
+        </form>
+        <form action="/nexus/privateRoom/<%= room.code %>" method="GET">
+          <button>Join Room</button>
+        </form>
+        <%}%>
+      </ul>
+    </div>
+    <script></script>
+  </body>
+</html>

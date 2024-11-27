@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chat Room</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/css/chatroom.css" />
+  </head>
+  <body>
+    <div class="chat-container">
+      <header class="chat-header">
+        <h1><i class="ri-chat-smile-line"></i> Nexus Connect</h1>
+        <a id="leaveBtn" class="btn">Leave Room</a>
+      </header>
+      <main class="chat-main">
+        <div class="chat-sidebar">
+          <h3>
+            <i id="roomName" class="fas fa-comments"></i>Room: <%=
+            existingRoom.room %>
+          </h3>
+          <h3>
+            <i id="roomCode" class="fas fa-comments"></i>Code: <%=
+            existingRoom.code %>
+          </h3>
+          <h2 id="room-name"></h2>
+          <h3><i class="fas fa-users"></i> Users</h3>
+          <ul id="users">
+            <li><%= existingUser.username %></li>
+          </ul>
+        </div>
+        <div class="chat-messages"></div>
+      </main>
+      <div class="chat-form-container">
+        <form id="chat-form">
+          <input
+            id="msg"
+            type="text"
+            placeholder="Enter Message"
+            required
+            autocomplete="off"
+          />
+          <button class="btn"><i class="fas fa-paper-plane"></i> Send</button>
+        </form>
+      </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.8.1/socket.io.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/moment.min.js"></script>
+    <!-- <script src="/js/clientSocket.js"></script> -->
+    <script>
+      const socket = io();
+
+      const form = document.querySelector("#chat-form");
+      const input = document.querySelector("#msg");
+      const message = document.querySelector(".chat-messages");
+      const roomName = "<%= existingRoom.room %>";
+      const roomCode = "<%= existingRoom.code %>";
+      const username = "<%= existingUser.username %>";
+      const userList = document.querySelector("#users");
+      const leaveBtn = document.querySelector("#leaveBtn");
+
+      socket.emit("joinRoom", { username, roomCode, roomName });
+
+      // Update user list when a user joins or leaves
+      socket.on("updateUserList", (users) => {
+        userList.innerHTML = "";
+        users.forEach((user) => {
+          const li = document.createElement("li");
+          li.textContent = user;
+          userList.appendChild(li);
+        });
+      });
+
+      // Display notification messages (join/leave messages)
+      socket.on("notify", (msg) => {
+        castMsg(msg);
+        message.scrollTop = message.scrollHeight;
+      });
+
+      // Display previous messages when joining a room
+      socket.on("roomMessages", (messages) => {
+        messages.forEach((msg) => {
+          castMsg({
+            username: msg.username,
+            text: msg.message,
+            time: moment().format("h:mm a"),
+          });
+        });
+        message.scrollTop = message.scrollHeight;
+      });
+
+      // Send new chat messages
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        if (input.value) {
+          socket.emit("chatMsg", { msg: input.value, username, roomCode });
+          input.value = "";
+        }
+      });
+
+      // Leave the room
+      leaveBtn.addEventListener("click", () => {
+        socket.emit("leaveRoom", { roomCode, username });
+        window.location.href = "/nexus/login";
+      });
+
+      // Display new chat messages in real-time
+      socket.on("chatMsg", (msg) => {
+        castMsg(msg);
+        message.scrollTop = message.scrollHeight;
+      });
+
+      // Utility function to append messages to the chat window
+      function castMsg(msg) {
+        const div = document.createElement("div");
+        div.classList.add("message");
+        div.innerHTML = `<p class="meta">${msg.username}  <span>${msg.time}</span></p>
+  <p class="text">${msg.text}</p>`;
+        message.appendChild(div);
+        console.log(msg.username, msg.text, msg.time);
+      }
+    </script>
+  </body>
+</html>
